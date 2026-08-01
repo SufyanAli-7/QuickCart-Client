@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import Home from './Home'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
+import Page404 from '@/components/Misc/Page404'
 
 const Frontend = () => {
   return (
@@ -10,7 +11,7 @@ const Frontend = () => {
     <Header />
     <Routes>
         <Route path='/' element={<Home />}/>
-        <Route path='*' element={<div>NotFound</div>}/>
+        <Route path='*' element={<Page404 />}/>
     </Routes>
     <Footer />
     </>
