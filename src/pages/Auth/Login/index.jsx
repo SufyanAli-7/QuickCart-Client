@@ -2,20 +2,34 @@ import React, { useState } from 'react';
 import { Form, Input, Button, Checkbox, ConfigProvider } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '@/assets/logo.svg';
+import { useAuth } from '@/context/AuthContext';
+import axios from 'axios';
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const { backendUrl, dispatch, readProfile } = useAuth();
 
   const onFinish = async (values) => {
+    const { email, password } = values;
     setLoading(true);
     try {
-      console.log('Login Values:', values);
-      window.toastify('Login successful!', 'success');
-      navigate('/');
+      const response = await axios.post(
+        `${backendUrl}/api/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        window.toastify(response.data.message || 'Login successful!', 'success');
+        await readProfile();        
+      }
     } catch (error) {
-      window.toastify('Login failed. Please check your credentials.', 'error');
+      console.error(error);
+      window.toastify(
+        error.response?.data?.message || 'Login failed. Please check your credentials.',
+        'error'
+      );
     } finally {
       setLoading(false);
     }

@@ -27,7 +27,7 @@ const AuthContextProvider = ({ children }) => {
 
     const readProfile = () => {
         axios.defaults.withCredentials = true;
-        axios.get(`${backendUrl}/api/user/data`)
+        axios.get(`${backendUrl}/api/user/current`)
             .then((res) => {
                 const { success, user } = res.data;
                 if (success) {

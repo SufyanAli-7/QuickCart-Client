@@ -2,20 +2,27 @@ import React, { useState } from 'react';
 import { Form, Input, Button, ConfigProvider } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '@/assets/logo.svg';
+import { useAuth } from '@/context/AuthContext';
+import axios from 'axios';
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
-
+  const { backendUrl } = useAuth();
+ 
   const onFinish = async (values) => {
+    const { fullName, email, password } = values;
     setLoading(true);
     try {
-      console.log('Register Values:', values);
-      window.toastify('Registration successful!', 'success');
-      navigate('/auth/login');
+      const response = await axios.post(`${backendUrl}/api/auth/register`, { fullName, email, password }, { withCredentials: true });
+      if (response.data.success) {
+        window.toastify(response.data.message, 'success');
+        navigate('/auth/login');
+      }
     } catch (error) {
-      window.toastify('Registration failed. Please try again.', 'error');
+      console.error(error);
+      window.toastify(error.response.data.message || 'Registration failed. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
