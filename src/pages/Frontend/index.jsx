@@ -4,6 +4,7 @@ import Home from './Home'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import Page404 from '@/components/Misc/Page404'
+import Products from './Products'
 
 const Frontend = () => {
   return (
@@ -11,6 +12,7 @@ const Frontend = () => {
     <Header />
     <Routes>
         <Route path='/' element={<Home />}/>
+        <Route path='products' element={<Products />}/>
         <Route path='*' element={<Page404 />}/>
     </Routes>
     <Footer />
