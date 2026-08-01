@@ -44,7 +44,7 @@ const Navbar = () => {
         </div>
 
         <button className="cursor-pointer px-8 py-2 bg-orange-600 hover:bg-orange-700 transition text-white rounded-full">
-          Login
+          <Link to="/auth/login">Login</Link>
         </button>
       </div>
 
