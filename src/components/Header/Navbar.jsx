@@ -106,20 +106,26 @@ const Navbar = () => {
       </button>
 
       {/* Mobile Menu */}
-      <div className={`${open ? 'flex' : 'hidden'} absolute top-15 left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden`}>
-        <Link to="/" className="block">Home</Link>
-        <Link to="/products" className="block">Products</Link>
-        <Link to="#" className="block">About</Link>
-        <Link to="#" className="block">Contact</Link>
+      <div className={`${open ? 'flex' : 'hidden'} absolute top-15 left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden z-50`}>
+        <Link to="/" onClick={() => setOpen(false)} className="block">Home</Link>
+        <Link to="/products" onClick={() => setOpen(false)} className="block">Products</Link>
+        <Link to="#" onClick={() => setOpen(false)} className="block">About</Link>
+        <Link to="#" onClick={() => setOpen(false)} className="block">Contact</Link>
         {!isAuth ? (
-          <button className="cursor-pointer px-6 py-2 mt-2 bg-orange-600 hover:bg-orange-700 transition text-white rounded-full text-sm">
+          <button
+            className="cursor-pointer px-6 py-2 mt-2 bg-orange-600 hover:bg-orange-700 transition text-white rounded-full text-sm"
+          >
             <Link to="/auth/login">Login</Link>
           </button>
         ) : (
           <>
-            <Link to="/dashboard" className="block font-medium text-gray-800">Dashboard</Link>
+            <Link to="/dashboard" className="block font-medium text-gray-800">
+              Dashboard
+            </Link>
             <button
-              onClick={handleLogout}
+              onClick={() => {
+                handleLogout();
+              }}
               className="cursor-pointer px-6 py-2 mt-2 bg-red-600 hover:bg-red-700 transition text-white rounded-full text-sm"
             >
               Logout
