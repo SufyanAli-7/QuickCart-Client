@@ -179,7 +179,7 @@ const MyOrders = () => {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center min-h-[300px]">
+          <div className="flex items-center justify-center min-h-75">
             <Spin size="large" tip="Loading your orders..." />
           </div>
         ) : orders.length === 0 ? (
