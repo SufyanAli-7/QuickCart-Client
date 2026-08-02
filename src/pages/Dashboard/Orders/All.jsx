@@ -150,7 +150,7 @@ const All = () => {
     {
       title: 'Order ID / Customer',
       dataIndex: '_id',
-      key: 'id',      
+      key: 'id',
       render: (id, record) => (
         <div>
           <div className="font-mono text-xs font-semibold text-gray-800 flex items-center gap-1">
@@ -158,7 +158,7 @@ const All = () => {
               #{id.slice(-6).toUpperCase()}
             </Text>
           </div>
-          <div className="font-medium text-gray-900 text-sm mt-0.5">{record.shippingDetails?.fullName || record.userId?.userName || 'Customer'}</div>
+          <div className="font-medium text-gray-900 text-sm mt-0.5">{record.shippingDetails?.fullName || record.userId?.fullName || 'Customer'}</div>
           <div className="text-xs text-gray-500">{record.shippingDetails?.email || record.userId?.email}</div>
         </div>
       ),
@@ -395,11 +395,11 @@ const All = () => {
                   <span className="text-sm font-semibold text-gray-800">
                     {detailsOrder.createdAt
                       ? new Date(detailsOrder.createdAt).toLocaleDateString('en-US', {
-                          weekday: 'short',
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                        })
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })
                       : 'N/A'}
                   </span>
                 </div>
@@ -413,7 +413,7 @@ const All = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="text-gray-500 font-medium block">Customer Name:</span>
-                    <span className="text-gray-900 font-semibold">{detailsOrder.shippingDetails?.fullName || detailsOrder.userId?.userName || 'N/A'}</span>
+                    <span className="text-gray-900 font-semibold">{detailsOrder.shippingDetails?.fullName || detailsOrder.userId?.fullName || 'N/A'}</span>
                   </div>
                   <div>
                     <span className="text-gray-500 font-medium block">Email:</span>
