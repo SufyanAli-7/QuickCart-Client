@@ -1,10 +1,10 @@
 import React from 'react'
-import Hero from './Hero'
+import AllProducts from './AllProducts'
 
 const Products = () => {
     return (
         <main>
-            <Hero />
+            <AllProducts />
         </main>
     )
 }

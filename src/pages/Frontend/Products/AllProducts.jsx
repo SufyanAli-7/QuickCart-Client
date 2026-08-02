@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 
-const Hero = () => {
+const AllProducts = () => {
   const { backendUrl, isAuth } = useAuth();
   const [allProducts, setAllProducts] = useState([]);
   const [wishlistIds, setWishlistIds] = useState([]);
@@ -302,4 +302,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default AllProducts;
