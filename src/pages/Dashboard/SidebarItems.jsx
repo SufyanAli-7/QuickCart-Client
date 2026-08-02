@@ -36,5 +36,11 @@ export const items = [
         label: <Link to='/dashboard/wishlist'>Wishlist</Link>,
         icon: <HeartOutlined />,
         allowedRoles: ['customer','admin'],
+    },
+    {
+        key: '6',
+        label: <Link to='/dashboard/my-orders'>My Orders</Link>,
+        icon: <ShoppingOutlined />,
+        allowedRoles: ['customer','admin'],
     }
 ]
