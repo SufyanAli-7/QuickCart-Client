@@ -198,7 +198,7 @@ const PopularProducts = () => {
 
                     {/* Product Image Link */}
                     <Link
-                      to={`/products/${product._id}`}
+                      to={`/product/${product._id}`}
                       className="flex items-center justify-center h-28 sm:h-36 my-1 sm:my-2 px-2 overflow-hidden cursor-pointer"
                     >
                       <img
@@ -212,7 +212,7 @@ const PopularProducts = () => {
                     <p className="text-xs text-gray-400 font-normal mb-0.5">{product.category}</p>
 
                     {/* Product Name Link */}
-                    <Link to={`/products/${product._id}`}>
+                    <Link to={`/product/${product._id}`}>
                       <h3 className="text-sm font-medium text-gray-800 line-clamp-1 cursor-pointer hover:text-orange-600 transition-colors">
                         {product.name}
                       </h3>
@@ -233,7 +233,7 @@ const PopularProducts = () => {
 
                   {/* Bottom Action Bar: View Details Button & Add to Cart Button */}
                   <div className="flex items-center justify-between gap-2 mt-3 pt-2">
-                    <Link to={`/products/${product._id}`} className="flex-1">
+                    <Link to={`/product/${product._id}`} className="flex-1">
                       <Button
                         size="small"
                         icon={<EyeOutlined className="text-xs" />}
