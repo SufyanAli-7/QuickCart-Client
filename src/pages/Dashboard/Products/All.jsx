@@ -90,7 +90,11 @@ const All = () => {
       dataIndex: 'price',
       key: 'price',
       sorter: (a, b) => a.price - b.price,
-      render: (price) => <span className="font-semibold text-gray-900">PKR {price}</span>,
+      render: (price) => (
+        <span className="font-semibold text-gray-900">
+          PKR {Number(price).toLocaleString()}
+        </span>
+      ),
     },
     {
       title: 'Stock',
