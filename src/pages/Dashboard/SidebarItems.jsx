@@ -1,4 +1,4 @@
-import { SkinOutlined, UserOutlined, UnorderedListOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { SkinOutlined, UserOutlined, UnorderedListOutlined, PlusCircleOutlined, ShoppingOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
 export const items = [
@@ -15,11 +15,20 @@ export const items = [
     },
     {
         key: '3',
+        label: 'Orders',
+        icon: <ShoppingOutlined />,
+        allowedRoles: ['admin'],
+        children: [
+            { key: '3_1', label: <Link to='/dashboard/orders'>All Orders</Link>, icon: <UnorderedListOutlined /> }
+        ]
+    },
+    {
+        key: '4',
         label: 'Users',
         icon: <UserOutlined />,
         allowedRoles: ['admin'],
         children: [
-            { key: '3_1', label: <Link to='/dashboard/users'>All Users</Link>, icon: <UnorderedListOutlined /> }
+            { key: '4_1', label: <Link to='/dashboard/users'>All Users</Link>, icon: <UnorderedListOutlined /> }
         ]
     }
 ]
