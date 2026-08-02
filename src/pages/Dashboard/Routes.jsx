@@ -5,6 +5,7 @@ import ProtectedRoute from '@/components/Misc/ProtectedRoute'
 import Page404 from '@/components/Misc/Page404'
 import Users from './Users'
 import Orders from './Orders'
+import Wishlist from './Wishlist'
 
 const Index = () => {
   return (
@@ -13,6 +14,7 @@ const Index = () => {
         <Route path='/products/*' element={<ProtectedRoute allowedRoles={['admin']} Component={Products} />} />
         <Route path='/orders/*' element={<ProtectedRoute allowedRoles={['admin']} Component={Orders} />} />
         <Route path='/users/*' element={<ProtectedRoute allowedRoles={['admin']} Component={Users} />} />
+        <Route path='/wishlist/*' element={<ProtectedRoute allowedRoles={['customer','admin']} Component={Wishlist} />} />
         <Route path='*' element={<Page404 />} />
     </Routes>
   )
