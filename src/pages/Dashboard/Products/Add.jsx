@@ -154,6 +154,7 @@ const Add = () => {
                 <InputNumber
                   placeholder="0.00"
                   className="w-full"
+                  style={{ width: '100%' }}
                   size="large"
                   min={0}
                   step={0.01}
@@ -169,6 +170,7 @@ const Add = () => {
                 <InputNumber
                   placeholder="Available quantity"
                   className="w-full"
+                  style={{ width: '100%' }}
                   size="large"
                   min={0}
                   precision={0}
