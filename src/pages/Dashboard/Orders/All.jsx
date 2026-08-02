@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Tag, Space, Popconfirm, Card, Modal, Select, ConfigProvider, Image } from 'antd';
+import { Table, Button, Tag, Space, Popconfirm, Card, Modal, Select, ConfigProvider, Image, Typography } from 'antd';
 import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
+
+const { Text } = Typography;
 
 const getStatusTagColor = (status) => {
   switch (status) {
@@ -151,8 +153,12 @@ const All = () => {
       key: 'id',      
       render: (id, record) => (
         <div>
-          <div className="font-mono text-xs font-semibold text-gray-800">#{id.slice(-6).toUpperCase()}</div>
-          <div className="font-medium text-gray-900 text-sm">{record.shippingDetails?.fullName || record.userId?.userName || 'Customer'}</div>
+          <div className="font-mono text-xs font-semibold text-gray-800 flex items-center gap-1">
+            <Text copyable={{ text: id }} className="font-mono text-xs font-semibold text-gray-800">
+              #{id.slice(-6).toUpperCase()}
+            </Text>
+          </div>
+          <div className="font-medium text-gray-900 text-sm mt-0.5">{record.shippingDetails?.fullName || record.userId?.userName || 'Customer'}</div>
           <div className="text-xs text-gray-500">{record.shippingDetails?.email || record.userId?.email}</div>
         </div>
       ),
@@ -348,7 +354,16 @@ const All = () => {
 
         {/* View Order Details Modal */}
         <Modal
-          title={`Order Details #${detailsOrder?._id?.slice(-6).toUpperCase() || ''}`}
+          title={
+            <div className="flex items-center gap-2">
+              <span>Order Details</span>
+              {detailsOrder?._id && (
+                <Text copyable={{ text: detailsOrder._id }} className="font-mono text-xs text-gray-600">
+                  #{detailsOrder._id}
+                </Text>
+              )}
+            </div>
+          }
           open={detailsModalOpen}
           onCancel={() => setDetailsModalOpen(false)}
           width={700}
