@@ -6,6 +6,9 @@ import Footer from '../../components/Footer'
 import Page404 from '@/components/Misc/Page404'
 import Products from './Products'
 import ProductDetails from './ProductDetails'
+import Cart from './Cart'
+import ProtectedRoute from '@/components/Misc/ProtectedRoute'
+import Checkout from './Checkout'
 
 const Frontend = () => {
   return (
@@ -15,6 +18,8 @@ const Frontend = () => {
         <Route path='/' element={<Home />}/>
         <Route path='products' element={<Products />}/>
         <Route path='product/:id' element={<ProductDetails />}/>
+        <Route path='cart' element={<ProtectedRoute allowedRoles={['customer','admin']} Component={Cart} />}/>
+        <Route path='checkout' element={<ProtectedRoute allowedRoles={['customer','admin']} Component={Checkout} />}/>  
         <Route path='*' element={<Page404 />}/>
     </Routes>
     <Footer />
