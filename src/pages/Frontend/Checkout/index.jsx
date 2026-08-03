@@ -13,21 +13,25 @@ import {
 } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
+
 const Checkout = () => {
   const { backendUrl, user } = useAuth();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+
   const [cart, setCart] = useState(null);
   const [totalItems, setTotalItems] = useState(0);
   const [subtotal, setSubtotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+
   const fetchCart = async () => {
     setLoading(true);
     try {
       const res = await axios.get(`${backendUrl}/api/cart/get`, {
         withCredentials: true,
       });
+
       if (res.data.success) {
         setCart(res.data.cart);
         setTotalItems(res.data.totalItems || 0);
@@ -40,9 +44,11 @@ const Checkout = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchCart();
   }, []);
+
   // Pre-fill email and user details from useAuth
   useEffect(() => {
     if (user) {
@@ -52,11 +58,13 @@ const Checkout = () => {
       });
     }
   }, [user, form]);
+
   const handlePlaceOrder = async (values) => {
     if (!cart || !cart.items || cart.items.length === 0) {
       window.toastify('Your cart is empty', 'error');
       return;
     }
+
     setSubmitting(true);
     try {
       const shippingDetails = {
@@ -68,14 +76,16 @@ const Checkout = () => {
         postalCode: values.postalCode,
         orderNote: values.orderNote || '',
       };
+
       const res = await axios.post(
         `${backendUrl}/api/order/create`,
         { shippingDetails, paymentStatus: 'Pending' },
         { withCredentials: true }
       );
+
       if (res.data.success) {
         window.toastify(res.data.message || 'Order placed successfully!', 'success');
-        // Redirect user to /dashboard/my-orders as requested
+        // Redirect user to /dashboard/my-orders
         navigate('/dashboard/my-orders');
       } else {
         window.toastify(res.data.message || 'Failed to place order', 'error');
@@ -87,8 +97,9 @@ const Checkout = () => {
       setSubmitting(false);
     }
   };
+
   return (
-       <ConfigProvider
+    <ConfigProvider
       theme={{
         token: {
           colorPrimary: '#ea580c',
@@ -104,9 +115,9 @@ const Checkout = () => {
           }
         `}
       </style>
-      <section className="checkout-page-section px-6 md:px-16 lg:px-24 xl:px-32 py-10 max-w-7xl mx-auto min-h-[70vh]">
-        {/* Navigation Breadcrumb Header */}
-        <div className="flex items-center justify-between pb-6 border-b border-gray-200 mb-8">
+      <section className="checkout-page-section w-full px-6 md:px-16 lg:px-24 xl:px-32 py-10 min-h-[70vh]">
+        {/* Navigation Header aligned with Navbar */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-6 border-b border-gray-200 mb-8 gap-4 w-full">
           <div>
             <span className="text-xs font-semibold text-orange-600 uppercase tracking-widest block mb-1">
               Checkout Process
@@ -118,24 +129,27 @@ const Checkout = () => {
           <Link
             to="/cart"
             style={{ color: '#ea580c' }}
-            className="text-sm font-semibold hover:opacity-80 flex items-center gap-1.5 transition"
+            className="text-sm sm:text-base font-semibold hover:opacity-80 flex items-center gap-1.5 transition whitespace-nowrap"
           >
             <LeftOutlined className="text-xs" /> Back to Cart
           </Link>
         </div>
+
         {loading ? (
           <div className="flex items-center justify-center min-h-87.5">
             <Spin size="large" tip="Loading checkout information..." />
           </div>
         ) : !cart || !cart.items || cart.items.length === 0 ? (
-          <div className="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
-            <ShoppingOutlined className="text-5xl text-gray-300 mb-4" />
-            <h2 className="text-xl font-bold text-gray-800">Your cart is empty</h2>
-            <p className="text-gray-500 text-sm mt-2 max-w-sm mx-auto">
+          <div className="max-w-2xl mx-auto text-center py-16 px-6 sm:px-10 bg-gray-50/80 rounded-3xl border border-gray-200/80 shadow-2xs my-8">
+            <div className="w-16 h-16 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl">
+              <ShoppingOutlined />
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Your cart is empty</h2>
+            <p className="text-gray-500 text-sm mt-2 max-w-md mx-auto leading-relaxed">
               Please add products to your cart before proceeding to checkout.
             </p>
             <Link to="/products">
-              <Button type="primary" className="mt-6 bg-orange-600 hover:bg-orange-700 h-10 px-6 font-semibold">
+              <Button type="primary" size="large" className="mt-6 bg-orange-600 hover:bg-orange-700 h-11 px-8 font-semibold rounded-xl shadow-xs">
                 Explore Products
               </Button>
             </Link>
@@ -145,7 +159,7 @@ const Checkout = () => {
             form={form}
             layout="vertical"
             onFinish={handlePlaceOrder}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start w-full"
           >
             {/* Left 7 Columns: Checkout Form */}
             <div className="lg:col-span-7 bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-2xs space-y-6">
@@ -249,17 +263,20 @@ const Checkout = () => {
                 </Form.Item>
               </div>
             </div>
+
             {/* Right 5 Columns: Order Summary */}
             <div className="lg:col-span-5 bg-gray-50 border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-2xs space-y-6">
               <h2 className="text-xl font-bold text-gray-900 border-b border-gray-200 pb-4">
                 Order Summary
               </h2>
+
               {/* Ordered Products List */}
               <div className="space-y-4 max-h-80 overflow-y-auto pr-1">
                 {cart.items.map((item) => {
                   const product = item.productId;
                   if (!product) return null;
                   const itemSubtotal = (product.price || 0) * item.quantity;
+
                   return (
                     <div
                       key={product._id}
@@ -283,6 +300,7 @@ const Checkout = () => {
                           </p>
                         </div>
                       </div>
+
                       <div className="text-right shrink-0">
                         <span className="font-bold text-gray-900 text-xs sm:text-sm">
                           PKR {itemSubtotal.toLocaleString()}
@@ -292,22 +310,26 @@ const Checkout = () => {
                   );
                 })}
               </div>
+
               {/* Financial Calculations */}
               <div className="space-y-3 text-sm pt-4 border-t border-gray-200">
                 <div className="flex justify-between text-gray-600">
                   <span>Total Items</span>
                   <span className="font-semibold text-gray-900">{totalItems}</span>
                 </div>
+
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal</span>
                   <span className="font-semibold text-gray-900">
                     PKR {subtotal.toLocaleString()}
                   </span>
                 </div>
+
                 <div className="flex justify-between text-gray-600">
                   <span>Shipping Fee</span>
                   <span className="font-semibold text-emerald-600">FREE</span>
                 </div>
+
                 <div className="pt-3 border-t border-gray-200 flex justify-between items-baseline">
                   <span className="text-base font-bold text-gray-900">Total Amount</span>
                   <span className="text-2xl font-extrabold" style={{ color: '#ea580c' }}>
@@ -315,6 +337,7 @@ const Checkout = () => {
                   </span>
                 </div>
               </div>
+
               {/* Submit / Place Order Button */}
               <Button
                 type="primary"

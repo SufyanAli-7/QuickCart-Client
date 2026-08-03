@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, ConfigProvider, Spin, InputNumber } from 'antd';
+import { Button, ConfigProvider, Spin } from 'antd';
 import {
   LeftOutlined,
   RightOutlined,
@@ -105,9 +105,9 @@ const Cart = () => {
         `}
       </style>
 
-      <section className="cart-page-section px-6 md:px-16 lg:px-24 xl:px-32 py-10 max-w-7xl mx-auto min-h-[70vh]">
-        {/* Page Header matching reference */}
-        <div className="flex items-center justify-between pb-6 border-b border-gray-200 mb-8">
+      <section className="cart-page-section w-full px-6 md:px-16 lg:px-24 xl:px-32 py-10 min-h-[70vh]">
+        {/* Page Header matching Navbar alignment */}
+        <div className="flex items-center justify-between pb-6 border-b border-gray-200 mb-8 w-full">
           <h1 className="text-3xl sm:text-4xl font-bold text-[#1F2937]">
             Your <span style={{ color: '#ea580c' }}>Cart</span>
           </h1>
@@ -121,20 +121,22 @@ const Cart = () => {
             <Spin size="large" tip="Loading cart items..." />
           </div>
         ) : !cart || !cart.items || cart.items.length === 0 ? (
-          <div className="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
-            <ShoppingCartOutlined className="text-5xl text-gray-300 mb-4" />
-            <h2 className="text-xl font-bold text-gray-800">Your cart is empty</h2>
-            <p className="text-gray-500 text-sm mt-2 max-w-sm mx-auto">
+          <div className="max-w-2xl mx-auto text-center py-16 px-6 sm:px-10 bg-gray-50/80 rounded-3xl border border-gray-200/80 shadow-2xs my-8">
+            <div className="w-16 h-16 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl">
+              <ShoppingCartOutlined />
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Your cart is empty</h2>
+            <p className="text-gray-500 text-sm mt-2 max-w-md mx-auto leading-relaxed">
               Looks like you haven't added any items to your cart yet.
             </p>
             <Link to="/products">
-              <Button type="primary" className="mt-6 bg-orange-600 hover:bg-orange-700 h-10 px-6 font-semibold">
+              <Button type="primary" size="large" className="mt-6 bg-orange-600 hover:bg-orange-700 h-11 px-8 font-semibold rounded-xl shadow-xs">
                 Explore Products
               </Button>
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start w-full">
             {/* Left 8 Columns: Cart Items Table */}
             <div className="lg:col-span-8">
               {/* Table Column Headers */}
@@ -227,7 +229,7 @@ const Cart = () => {
                 })}
               </div>
 
-              {/* Bottom Navigation matching reference */}
+              {/* Bottom Navigation */}
               <div className="pt-6 border-t border-gray-200 mt-4">
                 <Link
                   to="/products"
