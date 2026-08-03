@@ -15,8 +15,8 @@ const Index = () => {
         <Route path='/products/*' element={<ProtectedRoute allowedRoles={['admin']} Component={Products} />} />
         <Route path='/orders/*' element={<ProtectedRoute allowedRoles={['admin']} Component={Orders} />} />
         <Route path='/users/*' element={<ProtectedRoute allowedRoles={['admin']} Component={Users} />} />
-        <Route path='/wishlist/*' element={<ProtectedRoute allowedRoles={['customer','admin']} Component={Wishlist} />} />
-        <Route path='/my-orders/*' element={<ProtectedRoute allowedRoles={['customer','admin']} Component={MyOrders} />} />        
+        <Route path='/wishlist/*' element={<ProtectedRoute allowedRoles={['customer']} Component={Wishlist} />} />
+        <Route path='/my-orders/*' element={<ProtectedRoute allowedRoles={['customer']} Component={MyOrders} />} />        
         <Route path='*' element={<Page404 />} />
     </Routes>
   )
