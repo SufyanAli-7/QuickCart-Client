@@ -1,28 +1,31 @@
 # 🛒 QuickCart - E-Commerce Client Application
 
-QuickCart is a modern, responsive, full-stack E-Commerce frontend web application built with **React**, **Vite**, **Tailwind CSS**, and **Ant Design**. It features a state-of-the-art UI, real-time cart & wishlist synchronization, dynamic role-based dashboards, and a complete checkout workflow.
+QuickCart is a modern, responsive, full-stack E-Commerce frontend web application built with **React 19**, **Vite 8**, **Tailwind CSS v4**, and **Ant Design v6**. It features a state-of-the-art UI, real-time cart & wishlist synchronization, dynamic role-based dashboards, and a complete checkout workflow.
 
 ---
 
-## 🚀 Technologies Used
+## 🚀 Technologies & Version Specifications
 
-- **Framework / Bundler**: [React 18](https://react.dev/) + [Vite](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) + Custom Design Tokens
-- **UI Components & Icons**: [Ant Design v5](https://ant.design/) & `@ant-design/icons`
-- **Routing**: [React Router v6](https://reactrouter.com/) (with custom `ScrollToTop` helper)
-- **HTTP Client**: [Axios](https://axios-http.com/) (with HTTP-only cookie credentials)
-- **State & Auth Management**: Custom React Context API (`AuthContext`)
+- **Frontend Core**: [React v19.2.8](https://react.dev/) & `react-dom` v19.2.8
+- **Build Tool / Bundler**: [Vite v8.2.0](https://vitejs.dev/) with `@vitejs/plugin-react` v6.0.4
+- **Styling**: [Tailwind CSS v4.3.3](https://tailwindcss.com/) & `@tailwindcss/vite` v4.3.3
+- **UI Components**: [Ant Design v6.5.3](https://ant.design/) & `@ant-design/icons`
+- **Client Routing**: [React Router DOM v7.18.2](https://reactrouter.com/) (with custom `ScrollToTop` helper)
+- **HTTP Client**: [Axios v1.19.0](https://axios-http.com/) (configured with `withCredentials: true`)
+- **Animations**: [Lottie React v2.4.1](https://github.com/Gamify-IT/lottie-react)
+- **Linter**: [Oxlint v1.75.0](https://oxc.rs/)
 
 ---
 
 ## ✨ Key Features
 
 ### 🛍️ Public & Customer Storefront
-- **Sticky Navigation Bar**: Top-level sticky header with branding logo, catalog search, user menu dropdown, cart link, and mobile drawer.
+- **Sticky Navigation Bar**: Top-level sticky header with branding logo, interactive search bar redirecting to `/products?search=query`, user menu dropdown, cart link, and mobile drawer.
 - **Hero Auto-Carousel Slider**: Responsive 3-slide hero banner with smooth 3-second auto-transitions.
 - **Popular Products Section**: Top 6 active products grid (3 columns on PC, 1 on mobile) displaying product tags, price, wishlist toggle, details link, and cart actions.
 - **Store Specifications Grid**: Highlighted store features (Free Shipping, 7 Days Easy Return, 24/7 Support).
 - **Products Catalog Page (`/products`)**:
+  - URL Search filter support (`/products?search=keyword`) with dynamic title banner and `< All Products` back link.
   - 9 products per page with Ant Design `<Pagination />`.
   - Grid layout (3 columns on PC, 1 on mobile).
   - Clean title banner with product counters and scroll reset on page switch.
@@ -96,7 +99,7 @@ Client/
 │   ├── assets/               # Images and SVG icons
 │   ├── components/           # Reusable UI Components
 │   │   ├── Footer/           # Store footer
-│   │   ├── Header/           # Sticky Header & Navbar
+│   │   ├── Header/           # Sticky Header & Navbar with Search
 │   │   └── Misc/             # ProtectedRoute, ScrollToTop, Page404, Loader
 │   ├── config/               # Global Toastify & Axios configs
 │   ├── context/              # AuthContext & AppProvider
@@ -107,6 +110,7 @@ Client/
 │   │   └── Routes.jsx        # Main application router
 │   ├── App.jsx               # Root App component
 │   └── main.jsx              # Entry point with BrowserRouter & AppProvider
+├── vercel.json               # SPA Client Rewrite Rules for Vercel
 ├── package.json
 └── vite.config.js
 ```
