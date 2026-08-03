@@ -26,6 +26,32 @@ const Navbar = () => {
         </Link>
       ),
     },
+    ...(user?.role === 'customer' ? [
+      {
+        key: 'cart',
+        label: (
+          <Link to="/cart" className="font-medium text-gray-700 hover:text-orange-600">
+            My Cart
+          </Link>
+        ),
+      },
+      {
+        key: 'wishlist',
+        label: (
+          <Link to="/dashboard/wishlist" className="font-medium text-gray-700 hover:text-orange-600">
+            Wishlist
+          </Link>
+        ),
+      },
+      {
+        key: 'my-orders',
+        label: (
+          <Link to="/dashboard/my-orders" className="font-medium text-gray-700 hover:text-orange-600">
+            My Orders
+          </Link>
+        ),
+      },
+    ] : []),
     {
       type: 'divider',
     },
@@ -40,7 +66,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white relative transition-all">
+    <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white transition-all shadow-2xs">
 
       <Link to="/">
         <svg width="129" height="34" viewBox="0 0 129 34" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -109,15 +135,29 @@ const Navbar = () => {
           <button
             className="cursor-pointer px-6 py-2 mt-2 bg-orange-600 hover:bg-orange-700 transition text-white rounded-full text-sm"
           >
-            <Link to="/auth/login">Login</Link>
+            <Link to="/auth/login" onClick={() => setOpen(false)}>Login</Link>
           </button>
         ) : (
           <>
-            <Link to="/dashboard" className="block font-medium text-gray-800">
+            <Link to="/dashboard" onClick={() => setOpen(false)} className="block font-medium text-gray-800">
               Dashboard
             </Link>
+            {user?.role === 'customer' && (
+              <>
+                <Link to="/cart" onClick={() => setOpen(false)} className="block font-medium text-gray-800">
+                  My Cart
+                </Link>
+                <Link to="/dashboard/wishlist" onClick={() => setOpen(false)} className="block font-medium text-gray-800">
+                  Wishlist
+                </Link>
+                <Link to="/dashboard/my-orders" onClick={() => setOpen(false)} className="block font-medium text-gray-800">
+                  My Orders
+                </Link>
+              </>
+            )}
             <button
               onClick={() => {
+                setOpen(false);
                 handleLogout();
               }}
               className="cursor-pointer px-6 py-2 mt-2 bg-red-600 hover:bg-red-700 transition text-white rounded-full text-sm"

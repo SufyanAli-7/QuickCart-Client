@@ -3,7 +3,7 @@ import Navbar from './Navbar'
 
 const Header = () => {
   return (
-    <header>
+    <header className="sticky top-0 z-50 bg-white">
       <Navbar />
     </header>
   )
