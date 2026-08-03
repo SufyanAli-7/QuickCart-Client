@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, ConfigProvider, Spin, Tag, Pagination } from 'antd';
-import { ShoppingCartOutlined, HeartOutlined, HeartFilled, EyeOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { ShoppingCartOutlined, HeartOutlined, HeartFilled, EyeOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 
@@ -12,6 +12,10 @@ const AllProductsListing = () => {
   const [loading, setLoading] = useState(true);
   const [wishlistLoadingId, setWishlistLoadingId] = useState(null);
   const [cartLoadingId, setCartLoadingId] = useState(null);
+
+  // Search URL Query Params
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,6 +52,22 @@ const AllProductsListing = () => {
   useEffect(() => {
     fetchData();
   }, [isAuth]);
+
+  // Reset pagination when search query changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  // Filter products by search query
+  const filteredProducts = allProducts.filter((product) => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase().trim();
+    return (
+      product.name?.toLowerCase().includes(query) ||
+      product.category?.toLowerCase().includes(query) ||
+      product.description?.toLowerCase().includes(query)
+    );
+  });
 
   // Handle Add / Remove Wishlist Toggle
   const handleToggleWishlist = async (productId) => {
@@ -116,7 +136,7 @@ const AllProductsListing = () => {
 
   // Calculate paginated products
   const startIndex = (currentPage - 1) * pageSize;
-  const currentProducts = allProducts.slice(startIndex, startIndex + pageSize);
+  const currentProducts = filteredProducts.slice(startIndex, startIndex + pageSize);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -149,20 +169,31 @@ const AllProductsListing = () => {
               Store Catalog
             </span>
             <h1 className="text-2xl sm:text-4xl font-bold text-gray-900">
-              All Products
+              {searchQuery ? `Search Results for "${searchQuery}"` : 'All Products'}
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-2 max-w-lg">
-              Explore our full collection of top-rated items with doorstep delivery.
+              {searchQuery
+                ? `Showing items matching "${searchQuery}".`
+                : 'Explore our full collection of top-rated items with doorstep delivery.'}
             </p>
+
+            {searchQuery && (
+              <Link
+                to="/products"
+                className="inline-flex items-center gap-1.5 mt-4 px-3.5 py-1.5 text-xs font-semibold bg-white border border-gray-300 rounded-lg text-gray-700 hover:text-orange-600 hover:border-orange-500 transition-colors shadow-2xs cursor-pointer"
+              >
+                <ArrowLeftOutlined className="text-[10px]" /> All Products
+              </Link>
+            )}
           </div>
         </div>
 
         {/* Results Counter */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-xs sm:text-sm text-gray-500 font-medium">
-            Showing <span className="font-semibold text-gray-900">{allProducts.length > 0 ? startIndex + 1 : 0}</span>–
-            <span className="font-semibold text-gray-900">{Math.min(startIndex + pageSize, allProducts.length)}</span> of{' '}
-            <span className="font-semibold text-gray-900">{allProducts.length}</span> products
+            Showing <span className="font-semibold text-gray-900">{filteredProducts.length > 0 ? startIndex + 1 : 0}</span>–
+            <span className="font-semibold text-gray-900">{Math.min(startIndex + pageSize, filteredProducts.length)}</span> of{' '}
+            <span className="font-semibold text-gray-900">{filteredProducts.length}</span> products
           </p>
         </div>
 
@@ -170,9 +201,20 @@ const AllProductsListing = () => {
           <div className="flex items-center justify-center min-h-100">
             <Spin size="large" tip="Loading products..." />
           </div>
-        ) : allProducts.length === 0 ? (
-          <div className="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
-            <p className="text-gray-400 text-base font-medium">No products available at the moment.</p>
+        ) : filteredProducts.length === 0 ? (
+          <div className="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col items-center justify-center">
+            <p className="text-gray-700 text-base font-semibold">
+              No products found for "{searchQuery}"
+            </p>
+            <p className="text-gray-400 text-xs mt-1 mb-4">
+              Try searching with another keyword or browse all items.
+            </p>
+            <Link
+              to="/products"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition-colors shadow-2xs cursor-pointer"
+            >
+              <ArrowLeftOutlined className="text-xs" /> Back to All Products
+            </Link>
           </div>
         ) : (
           <>
@@ -283,12 +325,12 @@ const AllProductsListing = () => {
             </div>
 
             {/* Pagination Component: 9 items per page */}
-            {allProducts.length > pageSize && (
+            {filteredProducts.length > pageSize && (
               <div className="flex justify-center mt-12 mb-6">
                 <Pagination
                   current={currentPage}
                   pageSize={pageSize}
-                  total={allProducts.length}
+                  total={filteredProducts.length}
                   onChange={handlePageChange}
                   showSizeChanger={false}
                   className="products-pagination"

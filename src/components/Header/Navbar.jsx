@@ -1,11 +1,22 @@
 import { useAuth } from '@/context/AuthContext';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Avatar, Dropdown } from 'antd';
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { isAuth, user, handleLogout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+      if (open) setOpen(false);
+    }
+  };
 
   const userMenuItems = [
     {
@@ -89,13 +100,22 @@ const Navbar = () => {
         <Link to="#">About</Link>
         <Link to="#">Contact</Link>
 
-        <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
-          <input className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500" type="text" placeholder="Search products" />
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10.836 10.615 15 14.695" stroke="#7A7B7D" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-            <path clipRule="evenodd" d="M9.141 11.738c2.729-1.136 4.001-4.224 2.841-6.898S7.67.921 4.942 2.057C2.211 3.193.94 6.281 2.1 8.955s4.312 3.92 7.041 2.783" stroke="#7A7B7D" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
+        {/* Dynamic Interactive Search Bar */}
+        <form onSubmit={handleSearchSubmit} className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 py-1 rounded-full bg-white focus-within:border-orange-500 transition-colors">
+          <input 
+            className="w-40 xl:w-56 bg-transparent outline-none placeholder-gray-500 text-gray-800 text-sm" 
+            type="text" 
+            placeholder="Search products..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button type="submit" className="cursor-pointer text-gray-500 hover:text-orange-600 transition-colors p-1" title="Search">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.836 10.615 15 14.695" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+              <path clipRule="evenodd" d="M9.141 11.738c2.729-1.136 4.001-4.224 2.841-6.898S7.67.921 4.942 2.057C2.211 3.193.94 6.281 2.1 8.955s4.312 3.92 7.041 2.783" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </form>
 
         {!isAuth ? (
           <button className="cursor-pointer px-8 py-2 bg-orange-600 hover:bg-orange-700 transition text-white rounded-full">
@@ -125,8 +145,25 @@ const Navbar = () => {
         </svg>
       </button>
 
-      {/* Mobile Menu */}
+      {/* Mobile Drawer Menu */}
       <div className={`${open ? 'flex' : 'hidden'} absolute top-15 left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden z-50`}>
+        {/* Mobile Search Input */}
+        <form onSubmit={handleSearchSubmit} className="w-full mb-2 flex items-center text-sm gap-2 border border-gray-300 px-3 py-1.5 rounded-full bg-white">
+          <input 
+            className="w-full bg-transparent outline-none placeholder-gray-500 text-gray-800 text-sm" 
+            type="text" 
+            placeholder="Search products..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button type="submit" className="cursor-pointer text-gray-500 hover:text-orange-600 transition-colors p-1">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.836 10.615 15 14.695" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+              <path clipRule="evenodd" d="M9.141 11.738c2.729-1.136 4.001-4.224 2.841-6.898S7.67.921 4.942 2.057C2.211 3.193.94 6.281 2.1 8.955s4.312 3.92 7.041 2.783" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </form>
+
         <Link to="/" onClick={() => setOpen(false)} className="block">Home</Link>
         <Link to="/products" onClick={() => setOpen(false)} className="block">Products</Link>
         <Link to="#" onClick={() => setOpen(false)} className="block">About</Link>
