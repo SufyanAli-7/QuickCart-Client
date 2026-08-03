@@ -9,7 +9,8 @@ const Wishlist = () => {
   const { backendUrl } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [actionLoadingId, setActionLoadingId] = useState(null);
+  const [deleteLoadingId, setDeleteLoadingId] = useState(null);
+  const [cartLoadingId, setCartLoadingId] = useState(null);
 
   const fetchWishlist = async () => {
     setLoading(true);
@@ -39,7 +40,7 @@ const Wishlist = () => {
   }, []);
 
   const handleRemoveFromWishlist = async (productId) => {
-    setActionLoadingId(productId);
+    setDeleteLoadingId(productId);
     try {
       const response = await axios.delete(
         `${backendUrl}/api/wishlist/delete/${productId}`,
@@ -59,12 +60,12 @@ const Wishlist = () => {
         'error'
       );
     } finally {
-      setActionLoadingId(null);
+      setDeleteLoadingId(null);
     }
   };
 
   const handleAddToCart = async (product) => {
-    setActionLoadingId(product._id);
+    setCartLoadingId(product._id);
     try {
       const response = await axios.post(
         `${backendUrl}/api/cart/add`,
@@ -84,7 +85,7 @@ const Wishlist = () => {
         'error'
       );
     } finally {
-      setActionLoadingId(null);
+      setCartLoadingId(null);
     }
   };
 
@@ -144,68 +145,85 @@ const Wishlist = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-            {products.map((product) => (
-              <div
-                key={product._id}
-                className="bg-white border border-zinc-200 hover:border-zinc-300 transition-all duration-200 rounded-xl p-3 flex flex-col justify-between group shadow-2xs hover:shadow-xs"
-              >
-                <div>
-                  {/* Top right: Delete Trash Icon */}
-                  <div className="flex items-center justify-end mb-1">
-                    <Popconfirm
-                      title="Remove from Wishlist?"
-                      onConfirm={() => handleRemoveFromWishlist(product._id)}
-                      okText="Yes"
-                      cancelText="No"
-                      okButtonProps={{ danger: true }}
-                    >
-                      <div
-                        className="size-7 rounded-full border border-zinc-200 hover:border-red-200 hover:bg-red-50 flex items-center justify-center cursor-pointer transition text-gray-400 hover:text-red-500"
-                        title="Remove from wishlist"
-                      >
-                        <DeleteOutlined className="text-xs text-gray-500 hover:text-red-500" />
-                      </div>
-                    </Popconfirm>
-                  </div>
+            {products.map((product) => {
+              const isDeleting = deleteLoadingId === product._id;
+              const isCartLoading = cartLoadingId === product._id;
 
-                  {/* Product Image */}
-                  <div className="flex items-center justify-center h-28 my-1 px-2 overflow-hidden">
-                    <img
-                      src={product.imageURL || 'https://via.placeholder.com/140'}
-                      alt={product.name}
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-
-                  {/* Product Category & Title */}
-                  <p className="text-xs text-gray-400 font-normal mb-0.5">{product.category}</p>
-                  <p className="text-sm font-medium text-gray-800 line-clamp-2 min-h-9 leading-snug">
-                    {product.name}
-                  </p>
-                </div>
-
-                {/* Price & Action */}
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
+              return (
+                <div
+                  key={product._id}
+                  className="bg-white border border-zinc-200 hover:border-zinc-300 transition-all duration-200 rounded-xl p-3 flex flex-col justify-between group shadow-2xs hover:shadow-xs"
+                >
                   <div>
-                    <span className="text-sm font-semibold text-gray-900 block">
-                      PKR {product.price ? Number(product.price).toLocaleString() : '0'}
-                    </span>
+                    {/* Top right: Delete Trash Icon */}
+                    <div className="flex items-center justify-end mb-1">
+                      <Popconfirm
+                        title="Remove from Wishlist?"
+                        onConfirm={() => handleRemoveFromWishlist(product._id)}
+                        okText="Yes"
+                        cancelText="No"
+                        okButtonProps={{ danger: true }}
+                        disabled={isDeleting}
+                      >
+                        <div
+                          className="size-7 rounded-full border border-zinc-200 hover:border-red-200 hover:bg-red-50 flex items-center justify-center cursor-pointer transition text-gray-400 hover:text-red-500"
+                          title="Remove from wishlist"
+                        >
+                          {isDeleting ? (
+                            <Spin size="small" />
+                          ) : (
+                            <DeleteOutlined className="text-xs text-gray-500 hover:text-red-500" />
+                          )}
+                        </div>
+                      </Popconfirm>
+                    </div>
+
+                    {/* Product Image Link */}
+                    <Link
+                      to={`/product/${product._id}`}
+                      className="flex items-center justify-center h-28 my-1 px-2 overflow-hidden cursor-pointer"
+                    >
+                      <img
+                        src={product.imageURL || 'https://via.placeholder.com/140'}
+                        alt={product.name}
+                        className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </Link>
+
+                    {/* Product Category */}
+                    <p className="text-xs text-gray-400 font-normal mb-0.5">{product.category}</p>
+
+                    {/* Product Name Link */}
+                    <Link to={`/product/${product._id}`}>
+                      <p className="text-sm font-medium text-gray-800 line-clamp-2 min-h-9 leading-snug cursor-pointer hover:text-orange-600 transition-colors">
+                        {product.name}
+                      </p>
+                    </Link>
                   </div>
 
-                  <Button
-                    type="primary"
-                    icon={<ShoppingCartOutlined className="text-xs" />}
-                    onClick={() => handleAddToCart(product)}
-                    loading={actionLoadingId === product._id}
-                    disabled={product.stock < 1}
-                    size="small"
-                    className="bg-orange-600 hover:bg-orange-700! border-none font-medium text-xs rounded-lg h-7 px-3 flex items-center gap-1 shadow-2xs"
-                  >
-                    {product.stock < 1 ? 'Out' : 'Add'}
-                  </Button>
+                  {/* Price & Action */}
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
+                    <div>
+                      <span className="text-sm font-semibold text-gray-900 block">
+                        PKR {product.price ? Number(product.price).toLocaleString() : '0'}
+                      </span>
+                    </div>
+
+                    <Button
+                      type="primary"
+                      icon={<ShoppingCartOutlined className="text-xs" />}
+                      onClick={() => handleAddToCart(product)}
+                      loading={isCartLoading}
+                      disabled={product.stock < 1}
+                      size="small"
+                      className="bg-orange-600 hover:bg-orange-700! border-none font-medium text-xs rounded-lg h-7 px-3 flex items-center gap-1 shadow-2xs"
+                    >
+                      {product.stock < 1 ? 'Out' : 'Add'}
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
