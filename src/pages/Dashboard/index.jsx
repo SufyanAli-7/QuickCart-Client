@@ -2,7 +2,14 @@ import { useState } from 'react';
 import { Button, Layout, Menu, ConfigProvider } from 'antd';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { HomeOutlined, UserOutlined, UnorderedListOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import {
+  HomeOutlined,
+  AppstoreOutlined,
+  UnorderedListOutlined,
+  ShoppingOutlined,
+  TeamOutlined,
+  HeartOutlined,
+} from '@ant-design/icons';
 import logo from '@/assets/logo.svg';
 import Routes from './Routes';
 import { items } from './SidebarItems';
@@ -127,36 +134,72 @@ const Dashboard = () => {
       </Layout>
 
       {/* Mobile Bottom Navigation Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-[#DEE2E7] flex items-center justify-around z-1000 px-4 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-[#DEE2E7] flex items-center justify-around z-1000 px-2 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+        {/* Common: Home */}
         <Link 
           to="/" 
           className="flex flex-col items-center gap-1 text-[#505050] hover:text-orange-600 transition-colors"
         >
-          <HomeOutlined className="text-[20px]" />
-          <span className="text-[11px] font-bold">Home</span>
+          <HomeOutlined className="text-[18px]" />
+          <span className="text-[10px] font-bold">Home</span>
         </Link>
+
+        {/* Common: Dashboard */}
         <Link 
           to="/dashboard" 
           className={`flex flex-col items-center gap-1 ${getLinkColor('/dashboard')} hover:text-orange-600 transition-colors`}
         >
-          <UserOutlined className="text-[20px]" />
-          <span className="text-[11px] font-bold">Dashboard</span>
+          <AppstoreOutlined className="text-[18px]" />
+          <span className="text-[10px] font-bold">Dashboard</span>
         </Link>
-        {user?.role === 'admin' && (
+
+        {user?.role === 'admin' ? (
           <>
+            {/* Admin: Products */}
             <Link 
               to="/dashboard/products" 
               className={`flex flex-col items-center gap-1 ${getLinkColor('/dashboard/products')} hover:text-orange-600 transition-colors`}
             >
-              <UnorderedListOutlined className="text-[20px]" />
-              <span className="text-[11px] font-bold">Products</span>
+              <UnorderedListOutlined className="text-[18px]" />
+              <span className="text-[10px] font-bold">Products</span>
             </Link>
+
+            {/* Admin: Orders */}
             <Link 
-              to="/dashboard/products/add" 
-              className={`flex flex-col items-center gap-1 ${getLinkColor('/dashboard/products/add')} hover:text-orange-600 transition-colors`}
+              to="/dashboard/orders" 
+              className={`flex flex-col items-center gap-1 ${getLinkColor('/dashboard/orders')} hover:text-orange-600 transition-colors`}
             >
-              <PlusCircleOutlined className="text-[20px]" />
-              <span className="text-[11px] font-bold">Add</span>
+              <ShoppingOutlined className="text-[18px]" />
+              <span className="text-[10px] font-bold">Orders</span>
+            </Link>
+
+            {/* Admin: Users */}
+            <Link 
+              to="/dashboard/users" 
+              className={`flex flex-col items-center gap-1 ${getLinkColor('/dashboard/users')} hover:text-orange-600 transition-colors`}
+            >
+              <TeamOutlined className="text-[18px]" />
+              <span className="text-[10px] font-bold">Users</span>
+            </Link>
+          </>
+        ) : (
+          <>
+            {/* Customer: Wishlist */}
+            <Link 
+              to="/dashboard/wishlist" 
+              className={`flex flex-col items-center gap-1 ${getLinkColor('/dashboard/wishlist')} hover:text-orange-600 transition-colors`}
+            >
+              <HeartOutlined className="text-[18px]" />
+              <span className="text-[10px] font-bold">Wishlist</span>
+            </Link>
+
+            {/* Customer: My Orders */}
+            <Link 
+              to="/dashboard/my-orders" 
+              className={`flex flex-col items-center gap-1 ${getLinkColor('/dashboard/my-orders')} hover:text-orange-600 transition-colors`}
+            >
+              <ShoppingOutlined className="text-[18px]" />
+              <span className="text-[10px] font-bold">My Orders</span>
             </Link>
           </>
         )}
