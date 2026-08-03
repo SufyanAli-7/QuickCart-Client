@@ -150,7 +150,7 @@ const ProductDetails = () => {
         `}
       </style>
 
-      <div className="product-details-page min-h-[70vh] px-6 md:px-16 lg:px-24 xl:px-32 py-8 max-w-7xl mx-auto">
+      <div className="product-details-page min-h-[70vh] w-full px-6 md:px-16 lg:px-24 xl:px-32 py-8">
         {/* Navigation Breadcrumb & Back Link */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
           <button
