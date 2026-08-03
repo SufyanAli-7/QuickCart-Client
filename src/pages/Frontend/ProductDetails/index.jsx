@@ -10,6 +10,7 @@ import {
   SafetyCertificateOutlined,
   PlusOutlined,
   MinusOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
@@ -25,6 +26,7 @@ const ProductDetails = () => {
   const [isFav, setIsFav] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [cartLoading, setCartLoading] = useState(false);
+  const [buyNowLoading, setBuyNowLoading] = useState(false);
 
   const fetchProductDetails = async () => {
     setLoading(true);
@@ -64,7 +66,7 @@ const ProductDetails = () => {
     }
   }, [id, isAuth]);
 
-  // Wishlist Toggle
+  // Wishlist Toggle (Top-right Heart Icon on image box)
   const handleToggleWishlist = async () => {
     if (!isAuth) {
       window.toastify('Please log in to manage your wishlist', 'error');
@@ -129,6 +131,39 @@ const ProductDetails = () => {
       window.toastify(error.response?.data?.message || 'Failed to add to cart', 'error');
     } finally {
       setCartLoading(false);
+    }
+  };
+
+  // Buy Now (Adds item to cart & redirects to /cart)
+  const handleBuyNow = async () => {
+    if (!isAuth) {
+      window.toastify('Please log in to proceed with purchase', 'error');
+      return;
+    }
+
+    if (!product || product.stock < 1) {
+      window.toastify('Product is out of stock', 'error');
+      return;
+    }
+
+    setBuyNowLoading(true);
+    try {
+      const res = await axios.post(
+        `${backendUrl}/api/cart/add`,
+        { productId: product._id, quantity },
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        window.toastify('Added to cart!', 'success');
+        navigate('/cart');
+      } else {
+        window.toastify(res.data.message || 'Failed to add to cart', 'error');
+      }
+    } catch (error) {
+      console.error('Buy Now error:', error);
+      window.toastify(error.response?.data?.message || 'Failed to process Buy Now', 'error');
+    } finally {
+      setBuyNowLoading(false);
     }
   };
 
@@ -315,7 +350,7 @@ const ProductDetails = () => {
                   )}
                 </div>
 
-                {/* Action Buttons Row */}
+                {/* Action Buttons Row: Add to Cart & Buy Now */}
                 <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
                   <Button
                     type="primary"
@@ -331,22 +366,13 @@ const ProductDetails = () => {
 
                   <Button
                     size="large"
-                    onClick={handleToggleWishlist}
-                    loading={wishlistLoading}
-                    icon={
-                      isFav ? (
-                        <HeartFilled className="text-lg text-orange-600" style={{ color: '#ea580c' }} />
-                      ) : (
-                        <HeartOutlined className="text-lg text-gray-600" />
-                      )
-                    }
-                    className={`w-full sm:w-auto h-12 px-6 rounded-xl font-semibold border flex items-center justify-center gap-2 ${
-                      isFav
-                        ? 'border-orange-300 bg-orange-50 text-orange-600'
-                        : 'border-gray-300 text-gray-700 hover:text-orange-600 hover:border-orange-400'
-                    }`}
+                    icon={<ThunderboltOutlined className="text-lg" />}
+                    onClick={handleBuyNow}
+                    loading={buyNowLoading}
+                    disabled={product.stock < 1}
+                    className="w-full sm:w-auto h-12 px-8 rounded-xl font-semibold border-2 border-orange-600 text-orange-600 hover:bg-orange-50 hover:border-orange-700 transition flex items-center justify-center gap-2"
                   >
-                    {isFav ? 'In Wishlist' : 'Add to Wishlist'}
+                    Buy Now
                   </Button>
                 </div>
               </div>
@@ -354,7 +380,7 @@ const ProductDetails = () => {
           </div>
         )}
       </div>
-    </ConfigProvider>    
+    </ConfigProvider>
   );
 };
 
