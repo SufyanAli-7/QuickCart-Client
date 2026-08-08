@@ -9,6 +9,7 @@ import ProductDetails from './ProductDetails'
 import Cart from './Cart'
 import ProtectedRoute from '@/components/Misc/ProtectedRoute'
 import Checkout from './Checkout'
+import VerifyStripePayment from './Checkout/VerifyStripePayment'
 
 const Frontend = () => {
   return (
@@ -20,6 +21,7 @@ const Frontend = () => {
         <Route path='product/:id' element={<ProductDetails />}/>
         <Route path='cart' element={<ProtectedRoute allowedRoles={['customer','admin']} Component={Cart} />}/>
         <Route path='checkout' element={<ProtectedRoute allowedRoles={['customer','admin']} Component={Checkout} />}/>  
+        <Route path='verify-stripe-payment' element={<ProtectedRoute allowedRoles={['customer','admin']} Component={VerifyStripePayment} />}/>  
         <Route path='*' element={<Page404 />}/>
     </Routes>
     <Footer />

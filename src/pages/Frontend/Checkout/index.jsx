@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Form, Input, Button, ConfigProvider, Spin } from 'antd';
+import { Form, Input, Button, ConfigProvider, Spin, Radio } from 'antd';
 import {
   CheckCircleOutlined,
   ShoppingOutlined,
@@ -10,6 +10,8 @@ import {
   MailOutlined,
   PhoneOutlined,
   FileTextOutlined,
+  CreditCardOutlined,
+  DollarOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
@@ -24,6 +26,7 @@ const Checkout = () => {
   const [subtotal, setSubtotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('COD');
 
   const fetchCart = async () => {
     setLoading(true);
@@ -55,6 +58,7 @@ const Checkout = () => {
       form.setFieldsValue({
         fullName: user.fullName || '',
         email: user.email || '',
+        paymentMethod: 'COD',
       });
     }
   }, [user, form]);
@@ -77,22 +81,39 @@ const Checkout = () => {
         orderNote: values.orderNote || '',
       };
 
-      const res = await axios.post(
-        `${backendUrl}/api/order/create`,
-        { shippingDetails, paymentStatus: 'Pending' },
-        { withCredentials: true }
-      );
+      if (paymentMethod === 'Stripe') {
+        // Stripe Payment Session Creation
+        const res = await axios.post(
+          `${backendUrl}/api/order/create-stripe-session`,
+          { shippingDetails },
+          { withCredentials: true }
+        );
 
-      if (res.data.success) {
-        window.toastify(res.data.message || 'Order placed successfully!', 'success');
-        // Redirect user to /dashboard/my-orders
-        navigate('/dashboard/my-orders');
+        if (res.data.success && res.data.url) {
+          // Redirect browser to Stripe Hosted Checkout page
+          window.location.href = res.data.url;
+        } else {
+          window.toastify(res.data.message || 'Failed to initialize Stripe payment', 'error');
+        }
       } else {
-        window.toastify(res.data.message || 'Failed to place order', 'error');
+        // Cash on Delivery (COD) Flow
+        const res = await axios.post(
+          `${backendUrl}/api/order/create`,
+          { shippingDetails, paymentMethod: 'COD', paymentStatus: 'Pending' },
+          { withCredentials: true }
+        );
+
+        if (res.data.success) {
+          window.toastify(res.data.message || 'Order placed successfully!', 'success');
+          // Redirect user to /dashboard/my-orders
+          navigate('/dashboard/my-orders');
+        } else {
+          window.toastify(res.data.message || 'Failed to place order', 'error');
+        }
       }
     } catch (error) {
       console.error('Place order error:', error);
-      window.toastify(error.response?.data?.message || 'Failed to place order', 'error');
+      window.toastify(error.response?.data?.message || 'Failed to process order', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -137,7 +158,7 @@ const Checkout = () => {
 
         {loading ? (
           <div className="flex items-center justify-center min-h-87.5">
-            <Spin size="large" tip="Loading checkout information..." />
+            <Spin size="large" description="Loading checkout information..." />
           </div>
         ) : !cart || !cart.items || cart.items.length === 0 ? (
           <div className="max-w-2xl mx-auto text-center py-16 px-6 sm:px-10 bg-gray-50/80 rounded-3xl border border-gray-200/80 shadow-2xs my-8">
@@ -170,14 +191,15 @@ const Checkout = () => {
                   <p className="text-xs text-gray-500">Provide your delivery address and contact information</p>
                 </div>
               </div>
+
               {/* Form Fields */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
                 {/* Full Name */}
                 <Form.Item
                   name="fullName"
                   label={<span className="font-semibold text-gray-700 text-xs">Full Name</span>}
                   rules={[{ required: true, message: 'Please enter your full name' }]}
-                  className="sm:col-span-1"
+                  className="sm:col-span-1 mb-0!"
                 >
                   <Input
                     prefix={<UserOutlined className="text-gray-400" />}
@@ -186,6 +208,7 @@ const Checkout = () => {
                     className="rounded-xl"
                   />
                 </Form.Item>
+
                 {/* Email (Auto-filled from useAuth) */}
                 <Form.Item
                   name="email"
@@ -194,7 +217,7 @@ const Checkout = () => {
                     { required: true, message: 'Please enter your email' },
                     { type: 'email', message: 'Please enter a valid email' },
                   ]}
-                  className="sm:col-span-1"
+                  className="sm:col-span-1 mb-0!"
                 >
                   <Input
                     prefix={<MailOutlined className="text-gray-400" />}
@@ -203,12 +226,13 @@ const Checkout = () => {
                     className="rounded-xl"
                   />
                 </Form.Item>
+
                 {/* Phone Number */}
                 <Form.Item
                   name="phone"
                   label={<span className="font-semibold text-gray-700 text-xs">Phone Number</span>}
                   rules={[{ required: true, message: 'Please enter your phone number' }]}
-                  className="sm:col-span-2"
+                  className="sm:col-span-2 mb-0!"
                 >
                   <Input
                     prefix={<PhoneOutlined className="text-gray-400" />}
@@ -217,12 +241,13 @@ const Checkout = () => {
                     className="rounded-xl"
                   />
                 </Form.Item>
+
                 {/* Shipping Address */}
                 <Form.Item
                   name="address"
                   label={<span className="font-semibold text-gray-700 text-xs">Shipping Address</span>}
                   rules={[{ required: true, message: 'Please enter your street address' }]}
-                  className="sm:col-span-2"
+                  className="sm:col-span-2 mb-0!"
                 >
                   <Input.TextArea
                     placeholder="House / Apartment #, Street Address, Area"
@@ -230,29 +255,32 @@ const Checkout = () => {
                     className="rounded-xl"
                   />
                 </Form.Item>
+
                 {/* City */}
                 <Form.Item
                   name="city"
                   label={<span className="font-semibold text-gray-700 text-xs">City</span>}
                   rules={[{ required: true, message: 'Please enter your city' }]}
-                  className="sm:col-span-1"
+                  className="sm:col-span-1 mb-0!"
                 >
                   <Input placeholder="Karachi / Lahore / Islamabad" size="large" className="rounded-xl" />
                 </Form.Item>
+
                 {/* Postal Code */}
                 <Form.Item
                   name="postalCode"
                   label={<span className="font-semibold text-gray-700 text-xs">Postal Code</span>}
                   rules={[{ required: true, message: 'Please enter your postal code' }]}
-                  className="sm:col-span-1"
+                  className="sm:col-span-1 mb-0!"
                 >
                   <Input placeholder="75500" size="large" className="rounded-xl" />
                 </Form.Item>
+
                 {/* Order Notes (Optional) */}
                 <Form.Item
                   name="orderNote"
                   label={<span className="font-semibold text-gray-700 text-xs">Order Notes (Optional)</span>}
-                  className="sm:col-span-2"
+                  className="sm:col-span-2 mb-0!"
                 >
                   <Input.TextArea
                     prefix={<FileTextOutlined className="text-gray-400" />}
@@ -261,6 +289,60 @@ const Checkout = () => {
                     className="rounded-xl"
                   />
                 </Form.Item>
+              </div>
+
+              {/* Payment Method Selection */}
+              <div className="pt-6 border-t border-gray-100 space-y-4">
+                <h3 className="font-bold text-gray-900 text-base">Select Payment Method</h3>
+                <Radio.Group
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}
+                >
+                  {/* Option 1: COD */}
+                  <div>
+                    <label
+                      className={`flex items-center gap-3.5 p-4 rounded-xl border cursor-pointer transition-all ${
+                        paymentMethod === 'COD'
+                          ? 'border-orange-500 bg-orange-50/40 shadow-xs'
+                          : 'border-gray-200 bg-white hover:border-gray-300'
+                      }`}
+                    >
+                      <Radio value="COD" className="shrink-0" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-emerald-100/80 text-emerald-600 flex items-center justify-center text-base shrink-0">
+                          <DollarOutlined />
+                        </div>
+                        <div>
+                          <p className="font-bold text-sm text-gray-900">Cash on Delivery</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Pay cash upon delivery</p>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+
+                  {/* Option 2: Stripe Card */}
+                  <div>
+                    <label
+                      className={`flex items-center gap-3.5 p-4 rounded-xl border cursor-pointer transition-all ${
+                        paymentMethod === 'Stripe'
+                          ? 'border-orange-500 bg-orange-50/40 shadow-xs'
+                          : 'border-gray-200 bg-white hover:border-gray-300'
+                      }`}
+                    >
+                      <Radio value="Stripe" className="shrink-0" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center text-base shrink-0">
+                          <CreditCardOutlined />
+                        </div>
+                        <div>
+                          <p className="font-bold text-sm text-gray-900">Credit / Debit Card</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Pay securely with Stripe</p>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                </Radio.Group>
               </div>
             </div>
 
@@ -344,9 +426,17 @@ const Checkout = () => {
                 htmlType="submit"
                 loading={submitting}
                 size="large"
-                className="w-full bg-orange-600 hover:bg-orange-700! border-none h-12 text-base font-bold rounded-xl shadow-md flex items-center justify-center gap-2 mt-4"
+                className="w-full bg-orange-600 hover:bg-orange-700! border-none h-12 text-base font-bold rounded-xl shadow-md flex items-center justify-center gap-2 mt-4 cursor-pointer"
               >
-                Place Order <CheckCircleOutlined className="text-base" />
+                {paymentMethod === 'Stripe' ? (
+                  <>
+                    Pay with Card <CreditCardOutlined className="text-base" />
+                  </>
+                ) : (
+                  <>
+                    Place Order <CheckCircleOutlined className="text-base" />
+                  </>
+                )}
               </Button>
             </div>
           </Form>
