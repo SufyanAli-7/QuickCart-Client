@@ -29,7 +29,7 @@ const Register = () => {
   };
 
   const handleGoogleAuth = () => {
-    window.location.href = `${backendUrl}/api/auth/google`;
+    window.location.href = `${backendUrl}/auth/google`;
   };
 
   return (
