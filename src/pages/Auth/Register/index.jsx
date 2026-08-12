@@ -29,7 +29,9 @@ const Register = () => {
   };
 
   const handleGoogleAuth = () => {
-    window.location.href = `${import.meta.env.VITE_GOOGLE_AUTH_API}`;
+    window.location.href = `${import.meta.env.VITE_GOOGLE_AUTH_API}/auth/google`;
+    console.log("working", import.meta.env.VITE_GOOGLE_AUTH_API);
+    console.log(window.location.href);
   };
 
   return (
