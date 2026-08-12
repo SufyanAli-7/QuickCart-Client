@@ -1,6 +1,6 @@
 # 🛒 QuickCart - E-Commerce Client Application
 
-QuickCart is a modern, responsive, full-stack E-Commerce frontend web application built with **React 19**, **Vite 8**, **Tailwind CSS v4**, and **Ant Design v6**. It features a state-of-the-art UI, real-time cart & wishlist synchronization, dynamic role-based dashboards, and a complete checkout workflow.
+QuickCart is a modern, responsive, full-stack E-Commerce frontend web application built with **React 19**, **Vite 8**, **Tailwind CSS v4**, and **Ant Design v6**. It features a state-of-the-art UI, real-time cart & wishlist synchronization, dynamic role-based dashboards, Google OAuth 2.0 authentication, Stripe Checkout payments, and a complete e-commerce order workflow.
 
 ---
 
@@ -18,6 +18,10 @@ QuickCart is a modern, responsive, full-stack E-Commerce frontend web applicatio
 ---
 
 ## ✨ Key Features
+
+### 🔐 Authentication & Social Sign-In
+- **Email & Password Authentication**: Complete Login & Registration with Ant Design Form validation and Toastify feedback notifications.
+- **Google OAuth 2.0 Integration**: Official branded **"Sign in with Google"** and **"Sign up with Google"** buttons on Login and Register pages initiating one-click OAuth flow.
 
 ### 🛍️ Public & Customer Storefront
 - **Sticky Navigation Bar**: Top-level sticky header with branding logo, interactive search bar redirecting to `/products?search=query`, user menu dropdown, cart link, and mobile drawer.
@@ -43,9 +47,14 @@ QuickCart is a modern, responsive, full-stack E-Commerce frontend web applicatio
   - Continue Shopping back link (`/products`).
 - **Checkout Page (`/checkout`)**:
   - Shipping Form with auto-filled user email and name from `useAuth()`.
-  - Fields for Phone, Street Address, City, Postal Code, and Order Notes.
+  - Fields for Phone, Street Address, City, Postal Code, and Order Notes with compact form spacing.
   - Itemized Order Summary showing product list, quantities, unit prices, and final total.
-  - **Place Order** action sending data to `POST /api/order/create`, clearing the cart, and automatically redirecting the user to `/dashboard/my-orders`.
+  - **Payment Method Selection**: Choose between **Cash on Delivery (COD)** and **Credit / Debit Card (Stripe)** with 10px spacing.
+- **Stripe Hosted Checkout & Verification (`/verify-stripe-payment`)**:
+  - Directs card payments to Stripe Hosted Checkout page.
+  - Verification route retrieves Stripe session status without webhooks.
+  - **On Success**: Toasts confirmation, clears cart, and redirects user to `/dashboard/my-orders`.
+  - **On Cancellation / Failure**: Toasts error message and redirects back to `/cart`.
 
 ### 📊 Role-Based Dashboards (`/dashboard`)
 - **Admin Dashboard**:
@@ -104,9 +113,9 @@ Client/
 │   ├── config/               # Global Toastify & Axios configs
 │   ├── context/              # AuthContext & AppProvider
 │   ├── pages/                # Page Views
-│   │   ├── Auth/             # Login & Register views
+│   │   ├── Auth/             # Login & Register views (with Google Sign-In)
 │   │   ├── Dashboard/        # Admin & Customer Dashboard views
-│   │   ├── Frontend/         # Public pages (Home, Products, ProductDetails, Cart, Checkout)
+│   │   ├── Frontend/         # Public pages (Home, Products, ProductDetails, Cart, Checkout, VerifyStripePayment)
 │   │   └── Routes.jsx        # Main application router
 │   ├── App.jsx               # Root App component
 │   └── main.jsx              # Entry point with BrowserRouter & AppProvider
