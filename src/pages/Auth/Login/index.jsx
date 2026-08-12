@@ -35,7 +35,7 @@ const Login = () => {
   };
 
   const handleGoogleAuth = () => {
-    window.location.href = `${import.meta.env.VITE_GOOGLE_AUTH_API}/auth/google`;
+    window.location.href = `${backendUrl}/api/auth/google`;
   };
 
   return (
