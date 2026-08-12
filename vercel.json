@@ -5,6 +5,10 @@
       "destination": "https://quick-cart-server-five.vercel.app/api/:path*"
     },
     {
+      "source": "/auth/:path*",
+      "destination": "https://quick-cart-server-five.vercel.app/auth/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
