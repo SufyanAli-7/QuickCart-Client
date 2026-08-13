@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { createContext, useContext, useEffect, useReducer, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 const AuthContext = createContext()
 
@@ -21,6 +21,7 @@ const AuthContextProvider = ({ children }) => {
 
     const [state, dispatch] = useReducer(reducer, initialState)
     const navigate = useNavigate()
+    const location = useLocation()
     const [isAppLoading, setIsAppLoading] = useState(true)
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL || ""
@@ -46,7 +47,28 @@ const AuthContextProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        readProfile()
+        // Check if there's a token in the URL (from Google OAuth redirect)
+        const params = new URLSearchParams(location.search);
+        const token = params.get('token');
+
+        if (token) {
+            // Send the token to set-token endpoint via proxy (same-origin cookie)
+            axios.defaults.withCredentials = true;
+            axios.post(`${backendUrl}/api/auth/set-token`, { token })
+                .then(() => {
+                    // Clean the token from the URL
+                    const cleanUrl = location.pathname;
+                    window.history.replaceState({}, '', cleanUrl);
+                    // Now read profile with the cookie set
+                    readProfile();
+                })
+                .catch((err) => {
+                    console.error("Error setting token:", err);
+                    setIsAppLoading(false);
+                });
+        } else {
+            readProfile();
+        }
     }, [])
 
     const handleLogout = () => {
